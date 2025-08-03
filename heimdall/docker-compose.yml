@@ -1,0 +1,14 @@
+services:
+  heimdall:
+    image: 'linuxserver/heimdall:latest'
+    container_name: heimdall
+    restart: always
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Berlin
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - /opt/docker/heimdall:/config
