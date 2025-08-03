@@ -1,0 +1,13 @@
+DB_PASSWORD=postgres
+DB_HOSTNAME=immich_postgres
+DB_USERNAME=postgres
+DB_DATABASE_NAME=immich
+UPLOAD_LOCATION=/opt/daten/bilder
+IMMICH_VERSION=release
+EXTERNAL_PATH=/opt/daten/nas/bilder
+DB_DATA_LOCATION=/opt/docker/immich/db
+THUMB_LOCATION=/opt/docker/immich/thumbs
+ENCODED_VIDEO_LOCATION=/opt/docker/immich/encoded-video
+PROFILE_LOCATION=/opt/docker/immich/profile
+TZ=Europe/Berlin
+API_KEY=APIKEY GENERATED FROM IMMICH USER SETTINGS
