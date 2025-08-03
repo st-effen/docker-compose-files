@@ -1,0 +1,32 @@
+services:
+  jellyfin:
+    image: jellyfin/jellyfin:latest
+    container_name: jellyfin
+    #ports:
+    #  - 32768:8096
+    #  - 7359:7359/udp
+    #network_mode: host
+    volumes:
+      - /opt/docker/jellyfin/config:/config
+      - /opt/docker/jellyfin/cache:/cache
+      - /opt/docker/jellyfin/media:/media
+      - /opt/daten/videos:/Videos
+      - /opt/daten/filme:/Filme
+    restart: "unless-stopped"
+    networks:
+      jellyfin-net:
+        ipv4_address: 192.168.178.2
+    
+    
+networks:
+  jellyfin-net:
+    name: jellyfin-net
+    enable_ipv6: true
+    driver: macvlan
+    driver_opts:
+      parent: enp1s0f0
+      com.docker.network.enable_ipv6: "true"
+    ipam:
+      config:
+        - gateway: 192.168.178.1
+          subnet: 192.168.178.0/24
