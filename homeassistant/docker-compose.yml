@@ -1,0 +1,16 @@
+services:
+  homeassistant:
+    container_name: homeassistant
+    image: homeassistant/home-assistant:latest
+    volumes:
+      - /opt/docker/homeassistant/config:/config
+    environment:
+      - TZ=Europe/Berlin
+    restart: always
+    networks:
+      local-home-net:
+        ipv4_address: ${IPADDRESS}
+
+networks:
+  local-home-net:
+    external: true
