@@ -1,0 +1,13 @@
+services:
+  bludit:
+    image: danielsan05/bludit:latest
+    container_name: bludit
+    security_opt:
+      - no-new-privileges=true
+    volumes:
+      - /opt/docker/bludit/content:/usr/share/nginx/html/bl-content
+      - /opt/docker/bludit/themes:/usr/share/nginx/html/bl-themes
+      - /opt/docker/bludit/plugins:/usr/share/nginx/bl-plugins
+    ports:
+      - 2285:8080
+    restart: unless-stopped
