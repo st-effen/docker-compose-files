@@ -1,0 +1,79 @@
+name: immich
+
+services:
+  immich-server:
+    container_name: immich_server
+    image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
+    volumes:
+      - ${UPLOAD_LOCATION}:/usr/src/app/upload
+      - ${THUMB_LOCATION}:/usr/src/app/upload/thumbs
+      - ${ENCODED_VIDEO_LOCATION}:/usr/src/app/upload/encoded-video
+      - ${PROFILE_LOCATION}:/usr/src/app/upload/profile
+      - ${EXTERNAL_PATH}:/usr/src/app/external
+      - /etc/localtime:/etc/localtime:ro
+    env_file:
+      - stack.env
+    ports:
+      - 2283:2283
+    depends_on:
+      - redis
+      - database
+    restart: always
+    healthcheck:
+      disable: false
+
+  immich-machine-learning:
+    container_name: immich_machine_learning
+    # For hardware acceleration, add one of -[armnn, cuda, openvino] to the image tag.
+    # Example tag: ${IMMICH_VERSION:-release}-cuda
+    image: ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}
+    # extends: # uncomment this section for hardware acceleration - see https://immich.app/docs/features/ml-hardware-acceleration
+    #   file: hwaccel.ml.yml
+    #   service: cpu # set to one of [armnn, cuda, openvino, openvino-wsl] for accelerated inference - use the `-wsl` version for WSL2 where applicable
+    volumes:
+      - model-cache:/cache
+    env_file:
+      - stack.env
+    restart: always
+    healthcheck:
+      disable: false
+
+  redis:
+    container_name: immich_redis
+    image: docker.io/redis:6.2-alpine@sha256:905c4ee67b8e0aa955331960d2aa745781e6bd89afc44a8584bfd13bc890f0ae
+    healthcheck:
+      test: redis-cli ping || exit 1
+    restart: always
+    labels:
+      com.centurylinklabs.watchtower.enable: "false" 
+
+  database:
+    container_name: immich_postgres
+    image: ghcr.io/immich-app/postgres:14-vectorchord0.3.0-pgvectors0.2.0
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_DB: ${DB_DATABASE_NAME}
+    volumes:
+      - ${DB_DATA_LOCATION}:/var/lib/postgresql/data
+
+
+    restart: always
+    labels:
+      com.centurylinklabs.watchtower.enable: "false" 
+
+  immich-folder-album-creator:
+    container_name: immich_folder_album_creator
+    image: salvoxia/immich-folder-album-creator:latest
+    restart: unless-stopped
+
+    environment:
+      API_URL: http://immich_server:2283/api
+      API_KEY: ${API_KEY}
+      ROOT_PATH: /usr/src/app/external
+      CRON_EXPRESSION: "5 * * * *"
+      TZ: Europe/Berlin
+      ALBUM_LEVELS: 2
+
+volumes:
+  model-cache:
