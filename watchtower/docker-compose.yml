@@ -1,0 +1,24 @@
+version: '3.7'
+services:
+  watchtower:
+      image: containrrr/watchtower
+      container_name: watchtower
+      command: --no-startup-message --cleanup --include-stopped --stop-timeout 30s       # check all containers and update if needed
+      #--debug --monitor-only
+      environment:
+        - TZ=Europe/Berlin
+        - WATCHTOWER_NOTIFICATIONS_HOSTNAME=${HOSTNAME}                   # change your hostname, used in email
+        - WATCHTOWER_NOTIFICATIONS=email
+        - WATCHTOWER_NOTIFICATION_EMAIL_FROM=${MAILADDRESS_FROM}            # mail address for sender
+        - WATCHTOWER_NOTIFICATION_EMAIL_TO=${MAILADDRESS_TO}     # mail address for receiver
+        - WATCHTOWER_NOTIFICATION_EMAIL_SERVER=${MAILSERVER}            # mail server domain
+        - WATCHTOWER_NOTIFICATION_EMAIL_SERVER_USER=${MAILADDRESS_FROM}     # auth user for mail server
+        - WATCHTOWER_NOTIFICATION_EMAIL_SERVER_PASSWORD=${MAILPWD}  # auth password for mail server
+        - WATCHTOWER_NOTIFICATION_EMAIL_SERVER_PORT=${MAILSERVER_PORT}                 # mail server port
+        - WATCHTOWER_SCHEDULE=0 0 3 * * *                                # look for updates every day at 3 o'clock
+
+      #labels:
+      #  com.centurylinklabs.watchtower.enable: "true"
+      volumes:
+        - /var/run/docker.sock:/var/run/docker.sock
+      restart: always
