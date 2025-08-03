@@ -1,0 +1,25 @@
+services:
+  roundcubemail:
+    image: roundcube/roundcubemail:latest
+    container_name: roundcubemail
+#    restart: unless-stopped
+    volumes:
+      - /opt/docker/roundcube/www:/var/www/html
+      - /opt/docker/roundcube/db/sqlite:/var/roundcube/db
+    ports:
+      - 9002:80
+    environment:
+      ROUNDCUBEMAIL_DB_TYPE: sqlite
+      ROUNDCUBEMAIL_SKIN: elastic
+      ROUNDCUBEMAIL_DEFAULT_HOST: ssl://imap.strato.de
+      ROUNDCUBEMAIL_DEFAULT_PORT: 993
+      ROUNDCUBEMAIL_SMTP_SERVER: ssl://smtp.strato.de
+      ROUNDCUBEMAIL_SMTP_PORT: 587
+      ROUNDCUBEMAIL_COMPOSER_PLUGINS: "boressoft/ident_switch,weird-birds/thunderbird_labels,jfcherng-roundcube/show-folder-size,germancoding/tls_icon:^1.2"
+      ROUNDCUBEMAIL_PLUGINS: thunderbird_labels, show_folder_size, tls_icon
+
+### Optional: add a full mail server stack to use with Roundcube like https://hub.docker.com/r/tvial/docker-mailserver
+#   mailserver:
+#     image: tvial/docker-mailserver:latest
+#     hostname: mail.example.org
+#     ...  # for more options see https://github.com/tomav/docker-mailserver#examples
