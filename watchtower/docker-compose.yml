@@ -1,7 +1,7 @@
 version: '3.7'
 services:
   watchtower:
-      image: containrrr/watchtower
+      image: nickfedor/watchtower
       container_name: watchtower
       command: --no-startup-message --cleanup --include-stopped --stop-timeout 30s       # check all containers and update if needed
       #--debug --monitor-only
